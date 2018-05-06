@@ -47,7 +47,7 @@ def parse_tokens(tokens):
     if is_int(start):
         # A number 
         return ( Num(int(start)), tokens[1:] )
-    elif start in ["+", "-"]: 
+    elif start == "+": 
         # An addition or subtraction 
         expect(tokens[1], "(")
         (child1, tokens) = parse_tokens( tokens[2:]  )
@@ -62,12 +62,38 @@ def parse_tokens(tokens):
             return ( Addition(child1, child2), tokens[1:] )
         else:
             return ( Subtraction(child1, child2), tokens[1:] )
+
+    #ASK D. Wolfe or TODO: Unsure about the slpicing distance
+    elif start == "call":
+        expect(tokens[1], "(")
+        (obj, tokens) = parse_tokens( tokens[2:]  )
+        check(len(tokens) > 1)
+        (method, tokens) = parse_tokens( tokens[2:]  )
+        check(len(tokens) > 0)
+        #TODO: learn how to pass *args & *kwargs
+        expect(tokens[0], ")")
+        
     elif start == "set":
         # ann assignment statement 
         (varname, tokens) = parse_tokens(tokens[1:])
         expect(tokens[0], "=")
         (child, tokens) = parse_tokens(tokens[1:])
-        return ( Stmt(varname, child), tokens )
+        return ( Stmt(varname, child, True), tokens )
+    elif start == "new":
+        (varname, tokens) = parse_tokens(tokens[1:])
+        expect(tokens[0], "=")
+        (child, tokens) = parse_tokens(tokens[1:])
+        return ( Stmt(varname, child, False), tokens )
+    elif start == "quit" or start == "exit":
+        sys.exit()
+        
+    #TODO: test this import code
+    #ASK D. Wolfe about 'tokens' and if we want them
+    elif start == "import":
+        (varname, tokens) = parse_tokens(tokens[1:])
+        (packname, tokens) = parse_tokens(tokens[1:])
+        mod = importlib.import_module(varname, packname)
+    
     else:
         # variable name is only option remaining 
         check(start.isalpha(), "Variable names must be alphabetic characters")
