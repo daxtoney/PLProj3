@@ -105,6 +105,10 @@ class Div:
         return self.child1.eval() / self.child2.eval()
         
 
+class GroverError(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
 # some testing code
 if __name__ == "__main__":
     assert(Num(3).eval() == 3)
