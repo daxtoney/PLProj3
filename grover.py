@@ -1,6 +1,12 @@
 from grover_parse import *
 
+# loop 
 while True:
-    ln = input("Grover>> ")
-    root = parse(ln)
-    res = root.eval()
+	# read
+	ln = input("Grover>> ")
+	root = parse(ln)
+	# eval
+	res = root.eval()
+	# print 
+	if not res is None:
+		print(res)
