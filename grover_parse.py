@@ -80,7 +80,7 @@ def parse_tokens(tokens):
         f = getattr(obj, method)
         args = parse_tokens( tokens[-1:]  )
         expect(tokens[0], ")")
-        return f(args) #TODO: ASK WOLFE - what do I return 
+        return (f(args), tokens) #TODO: ASK WOLFE - what do I return 
     elif start == "set":
         # ann assignment statement 
         (varname, tokens) = parse_tokens(tokens[1:])
