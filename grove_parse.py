@@ -66,10 +66,10 @@ def parse_tokens(tokens):
         expect(tokens[1], "(")
         (obj, tokens) = parse_tokens( tokens[2:]  )
         check(len(tokens) > 1)
-        (method, tokens) = parse_tokens( tokens  )
+        (method, tokens) = parse_tokens( tokens )
         check(len(tokens) > 0)
-        expect(tokens[0], ")")
-        return ( Call(obj, method, tokens[1:]), tokens[1:])
+        expect(tokens[-1:][0], ")")
+        return ( Call(obj, method, tokens[:-1]), "")
 
     elif start == "set":
         #print("GOES THROUGH SET")
@@ -99,7 +99,7 @@ def parse_tokens(tokens):
         mod = importlib.import_module(packname.getName())
         if packname not in globals().keys():
             globals()[packname.getName()] = mod
-        print("math" in globals())
+        #print("math" in globals())
         return (packname,tokens)
     elif start[0] == '"':
         return (Str(start), tokens[1:])
@@ -109,7 +109,7 @@ def parse_tokens(tokens):
     else:
         # variable name is only option remaining
         #print("STart begins: " + start)
-        check(start.isalpha(), "Variable names must be alphabetic characters")
+        check(start[0].isalpha(), "Variable names must be alphabetic characters")
         return (VariableName(start), tokens[1:])
 
 

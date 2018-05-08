@@ -41,10 +41,13 @@ class Addition(Expr):
         if not isinstance(self.child2, Expr):
             raise GroveError("GROVE: expected axpression but recieved " + str(type(self.child2)))
 
-        if type(self.child1) != type(self.child2):
+        res1 = self.child1.eval()
+        res2 = self.child2.eval()
+
+        if type(res1) != type(res2):
             raise GroveError("GROVE: arguemnts are not of the same type")
 
-        return self.child1.eval() + self.child2.eval()
+        return res1 + res2
         
 #TODO: create a class "call"
 # Double check for what type of arguments
