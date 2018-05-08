@@ -74,6 +74,8 @@ def parse_tokens(tokens):
         #print("GOES THROUGH SET")
         # ann assignment statement 
         (varname, tokens) = parse_tokens(tokens[1:])
+        if type(varname) != VariableName:
+            raise GroveError("Invalid variable name")
         check(len(tokens) > 0)
         expect(tokens[0], "=")
         if tokens[1] == "new":

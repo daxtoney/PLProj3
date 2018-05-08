@@ -72,19 +72,23 @@ class Call(Expr):
         self.obj = obj
         self.method = method
         self.args = args
+        if '=' in self.args[0]:
+            raise GroveError("No statements allowed in method call")
 
     #TODO: understand how *args **kwargs work and how to loop through them
 
     def eval(self):
          # WE ARE TREATING the number 4 as a method, and we can't
-        if self.method not in dir(self.obj):
+        if self.method.getName() not in dir(self.obj):
+            #print(self.obj)
+            #print(self.method.getName())
             raise GroveError("GROVER: object " + self.obj.getName() + " does not have a method named " + self.method.getName())
         if not callable(getattr(self.obj, self.method)):
             raise GroveError("GROVER: method " + self.method.getName() + " is not callable")
 
         f = getattr(self.obj, self.method)
         #funcArgs = parse_tokens( self.args )
-        print(self.args)
+        #print(self.args)
         return f(self.args)
     
 #TODO: Create className & variableName classes
@@ -92,8 +96,13 @@ class ClassName(Expr):
     def __init__(self, name):
         self.name = name
         #TODO: add the extra conditions
+
+    def eval(self):
+        #if name not in globals():
+
         if not self.name[0].isalpha() and name[0] != "_":
-            raise GroveError("GROVE: " + name + " is invalid sytax for the name of a variable")
+            raise GroveError("GROVE: " + name + " is invalid sytax for the name of a class")
+
 
     def getName(self):
         return self.name
