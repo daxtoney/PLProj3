@@ -9,17 +9,17 @@ class Str(Expr):
     def __init__(self, value):
         self.value = value
 
-        noWhite = value.split()
+    def eval(self):
+        noWhite = self.value.split()
         if len(noWhite) > 1:
             raise GroveError("GROVE: no spaces allowed on Strings")
-        noQuotes = value.split('"')
+        noQuotes = self.value.split('"')
         if len(noQuotes) == 2:
             raise GroveError("GROVE: missing quotation mark")
         if len(noQuotes) > 3:
             raise GroveError("GROVE: no support for quotes in Strings")
 
-    def eval(self):
-       return self.value.strip('"\'')
+        return self.value.strip('"\'')
     
 class Num(Expr):
     def __init__(self, value):
@@ -34,6 +34,7 @@ class Addition(Expr):
         self.child1 = child1
         self.child2 = child2
 
+    def eval(self):
         if not isinstance(self.child1, Expr):
             raise GroveError("GROVE: expected axpression but recieved " + str(type(self.child1)))
 
@@ -43,7 +44,6 @@ class Addition(Expr):
         if type(self.child1) != type(self.child2):
             raise GroveError("GROVE: arguemnts are not of the same type")
 
-    def eval(self):
         return self.child1.eval() + self.child2.eval()
         
 #TODO: create a class "call"
@@ -53,9 +53,6 @@ class Call(Expr):
         self.obj = obj
         self.method = method
         self.args = args
-
-        if method.getName() not in dir(obj.getName()) and callable(getattr(obj.getName(),method.getName())):
-            raise GroveError("GROVE: " + obj + " does not contain method " + method)
 
     #TODO: understand how *args **kwargs work and how to loop through them
 
@@ -109,13 +106,13 @@ class Stmt:
         self.expr = expr
         self.isSet = isSet
 
+    def eval(self):
         if not isinstance(self.expr, Expr):
             raise GroveError("GROVE: expected expression but recieved " + str(type(self.expr)))
 
         if not isinstance(self.varname, VariableName):
             raise GroveError("GROVE: expected variable name but recieved " + str(type(self.varname)))
 
-    def eval(self):
         if (self.isSet):
             var_table[self.varname.getName()] = self.expr.eval()
         else:
