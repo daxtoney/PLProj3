@@ -58,19 +58,29 @@ class Call(Expr):
 
     def eval(self):
         pass
-        
 
-#TODO: create Str class
+#TODO: Create className & variableName classes
+class ClassName(Expr):
+        def __init__(self, name):
+        self.name = name
+
+        #TODO: add the extra conditions
+        if (not self.name[0].isalpha() and name[0] != "_"):
+            raise GroverError("GROVER: " + name + " is invalid sytax for the name of a variable")
+
+    def getName(self):
+        return self.name 
+        
 #Split on white spaces, then check for length if 1 split on quotes and check for length. Lastly, evalutate string
-        
-        
-class Name(Expr):
+
+#Name may have classes not in the vartable yet, change accordingly --- Change this to a like "variableName" and have Name not be evaluated        
+class VariableName(Expr):
     def __init__(self, name):
         self.name = name
 
-    #TODO: add the extra conditions
-    if (!name[0].isalpha() and name[0] != "_"):
-        raise GroverError("GROVER: " + name + " is invalid sytax for the name of a variable")
+        #TODO: add the extra conditions
+        if (not self.name[0].isalpha() and name[0] != "_"):
+            raise GroverError("GROVER: " + name + " is invalid sytax for the name of a variable")
 
     def getName(self):
         return self.name 
@@ -86,6 +96,7 @@ class Stmt:
     def __init__(self, varname, expr, isSet):
         self.varname = varname
         self.expr = expr
+        self.isSet = isSet
 
         if not isinstance(self.expr, Expr):
             raise ValueError("GROVER: expected expression but recieved " + str(type(self.expr)))
@@ -94,10 +105,20 @@ class Stmt:
             raise ValueError("GROVER: expected variable name but recieved " + str(type(self.varname)))
 
     def eval(self):
-        if (isSet):
+        if (self.isSet):
             var_table[self.varname.getName()] = self.expr.eval()
-        #else:
-            #var_table[self.varname.getName()] = 
+        else:
+            #TODO: learn to handle the <Name>.<Name> and <Name>
+            
+            #FROM WOLVES' CODE
+            self.modulename = "__builtins__"
+            self.classname = self.expr
+
+            if type(thing) == <type 'module'>:
+                cls = getattr(thing, self.classname)
+            else:
+                cls = thing[self.classname]
+            var_table[self.varname.getName()] = cls()
 
 
 class GroverError(Exception):

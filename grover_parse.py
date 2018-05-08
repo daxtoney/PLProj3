@@ -77,14 +77,23 @@ def parse_tokens(tokens):
         # ann assignment statement 
         (varname, tokens) = parse_tokens(tokens[1:])
         expect(tokens[0], "=")
-        (child, tokens) = parse_tokens(tokens[1:])
-        return ( Stmt(varname, child, True), tokens )
-    elif start == "new":
-        (varname, tokens) = parse_tokens(tokens[1:])
-        expect(tokens[0], "=")
-        (child, tokens) = parse_tokens(tokens[1:])
-        return ( Stmt(varname, child, False), tokens )
+        if tokens[1] == "new":
+            #leave 'new' behind but let them know that it is there with the boolean
+
+
+            ##check for '.' and see for a ComplexName
+            (child, tokens) = parse_tokens(tokens[2:])
+            return ( Stmt(varname, child, False), tokens )
+        else:
+            (child, tokens) = parse_tokens(tokens[1:])
+            return ( Stmt(varname, child, True), tokens )
+##    elif start == "new":
+##        (varname, tokens) = parse_tokens(tokens[1:])
+##        expect(tokens[0], "=")
+##        (child, tokens) = parse_tokens(tokens[1:])
+##        return ( Stmt(varname, child, False), tokens )
     elif start == "quit" or start == "exit":
+        import sys
         sys.exit()
         
     #TODO: test this import code
@@ -93,6 +102,7 @@ def parse_tokens(tokens):
         (varname, tokens) = parse_tokens(tokens[1:])
         (packname, tokens) = parse_tokens(tokens[1:])
         mod = importlib.import_module(varname, packname)
+        
     
     else:
         # variable name is only option remaining 
