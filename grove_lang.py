@@ -1,9 +1,23 @@
 ## Parse tree nodes for the GROVE language
+import importlib
 
 var_table = {}
 
 class Expr:
     pass # empty class
+
+class Imprt(Expr):
+    def __init__(self, packname):
+        self.packname = packname
+
+    def eval(self):
+        try:
+            mod = importlib.import_module(packname.getName())
+        except ImportError as e:
+            raise GroveError("GROVE: package does not exist")
+        
+        if packname not in globals().keys():
+            globals()[self.packname.getName()] = mod
 
 class Str(Expr):
     def __init__(self, value):
@@ -69,10 +83,10 @@ class Call(Expr):
             raise GroveError("GROVER: method " + self.method.getName() + " is not callable")
 
         f = getattr(self.obj, self.method)
-        funcArgs = parse_tokens( self.args )
-
-        return f(funcArgs)
-
+        #funcArgs = parse_tokens( self.args )
+        print(self.args)
+        return f(self.args)
+    
 #TODO: Create className & variableName classes
 class ClassName(Expr):
     def __init__(self, name):

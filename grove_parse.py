@@ -1,5 +1,4 @@
 from grove_lang import *
-import importlib
 
 # Utility methods for handling parse errors
 def check(condition, message = "Unexpected end of expression"):
@@ -96,11 +95,11 @@ def parse_tokens(tokens):
     #ASK D. Wolfe about 'tokens' and if we want them
     elif start == "import":
         (packname, tokens) = parse_tokens(tokens[1:])
-        mod = importlib.import_module(packname.getName())
-        if packname not in globals().keys():
-            globals()[packname.getName()] = mod
+##        mod = importlib.import_module(packname.getName())
+##        if packname not in globals().keys():
+##            globals()[packname.getName()] = mod
         #print("math" in globals())
-        return (packname,tokens)
+        return (Imprt(packname), "")
     elif start[0] == '"':
         return (Str(start), tokens[1:])
 
