@@ -57,11 +57,7 @@ def parse_tokens(tokens):
         (child2, tokens) = parse_tokens( tokens[2:]  )
         check(len(tokens) > 0)
         expect(tokens[0], ")")
-
-        if start == "+":
-            return ( Addition(child1, child2), tokens[1:] )
-        else:
-            return ( Subtraction(child1, child2), tokens[1:] )
+        return ( Addition(child1, child2), tokens[1:] )
 
     #ASK D. Wolfe or TODO: Unsure about the slpicing distance
     elif start == "call":
@@ -76,7 +72,9 @@ def parse_tokens(tokens):
             raise GroverError("GROVER: object " + obj + " does not have a method named " + method)
         if not callable(getattr(obj, method)):
             raise GroverError("GROVER: method " + method + " is not callable")
-        # calls 
+        # calls
+
+        #handle this in calc_lang
         f = getattr(obj, method)
         args = parse_tokens( tokens[-1:]  )
         expect(tokens[0], ")")
@@ -108,6 +106,8 @@ def parse_tokens(tokens):
         mod = importlib.import_module(packname)
         if packname not in gloabls().keys():
             globals()[packname] = mod
+        # Don't handle it here
+        # return ( Impt(varname, child), tokens)
     
     else:
         # variable name is only option remaining 
