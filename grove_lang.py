@@ -47,7 +47,7 @@ class Addition(Expr):
 #TODO: create a class "call"
 # Double check for what type of arguments
 class Call(Expr):
-    def __init__(self, obj, method, *args, **kwargs):
+    def __init__(self, obj, method, *args):
         self.obj = obj
         self.method = method
         self.args = args

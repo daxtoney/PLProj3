@@ -78,7 +78,7 @@ def parse_tokens(tokens):
         (method, tokens) = parse_tokens( tokens  )
         check(len(tokens) > 0)
         expect(tokens[0], ")")
-        return ( Call(obj, method, tokens[-1:]), tokens)
+        return ( Call(obj, method, tokens[1:]), tokens[1:])
 
     elif start == "set":
         #print("GOES THROUGH SET")
