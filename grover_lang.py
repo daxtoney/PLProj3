@@ -63,10 +63,9 @@ class Call(Expr):
 class ClassName(Expr):
     def __init__(self, name):
         self.name = name
-
-    #TODO: add the extra conditions
-    if (not self.name[0].isalpha() and name[0] != "_"):
-        raise GroverError("GROVER: " + name + " is invalid sytax for the name of a variable")
+        #TODO: add the extra conditions
+        if not self.name[0].isalpha() and name[0] != "_":
+            raise GroverError("GROVER: " + name + " is invalid sytax for the name of a variable")
 
     def getName(self):
         return self.name
@@ -79,7 +78,7 @@ class VariableName(Expr):
         self.name = name
 
         #TODO: add the extra conditions
-        if (not self.name[0].isalpha() and name[0] != "_"):
+        if not self.name[0].isalpha() and name[0] != "_":
             raise GroverError("GROVER: " + name + " is invalid sytax for the name of a variable")
 
     def getName(self):
@@ -101,7 +100,7 @@ class Stmt:
         if not isinstance(self.expr, Expr):
             raise ValueError("GROVER: expected expression but recieved " + str(type(self.expr)))
 
-        if not isinstance(self.varname, Name):
+        if not isinstance(self.varname, VariableName):
             raise ValueError("GROVER: expected variable name but recieved " + str(type(self.varname)))
 
     def eval(self):

@@ -4,7 +4,7 @@ from grover_lang import *
 def check(condition, message = "Unexpected end of expression"):
     """ Checks if condition is true, raising a ValueError otherwise """
     if not condition:
-        raise GroverError("GROVER: " + message)
+        raise ValueError("GROVER: " + message)
         
 def expect(token, expected):
     """ Checks that token matches expected
@@ -27,7 +27,15 @@ def parse(s):
     """ Return an object representing a parsed command
         Throws ValueError for improper syntax """
     # TODO
+    #if isinstance(remaining_tokens, None):
+        #return root
+    print(s)
+    print(s.split())
+    
+    #TypeError: 'NoneType' object is not iterable 
     (root, remaining_tokens) = parse_tokens(s.split())
+    print(root)
+    print(remaining_tokens)
     check(len(remaining_tokens) == 0, "Expected end of command but found '" + " ".join(remaining_tokens) + "'")
 
     return root 
@@ -67,35 +75,29 @@ def parse_tokens(tokens):
     elif start == "call":
         expect(tokens[1], "(")
         (obj, tokens) = parse_tokens( tokens[2:]  )
-        check(len(tokens) >= 1)
+        check(len(tokens) > 1)
         (method, tokens) = parse_tokens( tokens[2:]  )
-        check(len(tokens) >= 0)
+        check(len(tokens) > 0)
         #TODO: learn how to pass *args & *kwargs
-        # check that the object has the method 
-        if method not in dir(obj): 
-            raise GroverError("GROVER: object " + obj + " does not have a method named " + method)
-        if not callable(getattr(obj, method)):
-            raise GroverError("GROVER: method " + method + " is not callable")
-        # calls 
-        f = getattr(obj, method)
-        args = parse_tokens( tokens[-1:]  )
         expect(tokens[0], ")")
-        return f(args) #TODO: ASK WOLFE - what do I return 
+        
     elif start == "set":
+        #print("GOES THROUGH SET")
         # ann assignment statement 
         (varname, tokens) = parse_tokens(tokens[1:])
+        #print ("THIS IS THE TOKEN: " + tokens[0])
         expect(tokens[0], "=")
         if tokens[1] == "new":
+            #print("GOES THROUGH NEW")
             #leave 'new' behind but let them know that it is there with the boolean
-
-
             ##check for '.' and see for a ComplexName
             (child, tokens) = parse_tokens(tokens[2:])
             return ( Stmt(varname, child, False), tokens )
         else:
+            #ASK WOLFE ABOUT PARSE_TOKENS RECURSIVE CALLS
             (child, tokens) = parse_tokens(tokens[1:])
+            #print("GOES THROUGH HERE")
             return ( Stmt(varname, child, True), tokens )
-            
     elif start == "quit" or start == "exit":
         import sys
         sys.exit()
@@ -108,12 +110,15 @@ def parse_tokens(tokens):
         mod = importlib.import_module(packname)
         if packname not in gloabls().keys():
             globals()[packname] = mod
+
+    elif start[0] == '"':
+        return (Str(start), tokens[1:])
     
     else:
-        # variable name is only option remaining 
+        # variable name is only option remaining
+        #print("STart begins: " + start)
         check(start.isalpha(), "Variable names must be alphabetic characters")
-
-        return (Name(start), tokens[1:])
+        return (VariableName(start), tokens[1:])
 
 
 # # Testing code
