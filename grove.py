@@ -3,7 +3,7 @@ from grover_parse import *
 # loop 
 while True:
 	# read
-	ln = input("Grover>> ")
+	ln = input("Grove>> ")
 	root = parse(ln)
 	# eval
 	res = root.eval()

@@ -75,12 +75,27 @@ def parse_tokens(tokens):
     elif start == "call":
         expect(tokens[1], "(")
         (obj, tokens) = parse_tokens( tokens[2:]  )
-        check(len(tokens) > 1)
-        (method, tokens) = parse_tokens( tokens[2:]  )
-        check(len(tokens) > 0)
+        #print(obj.getName())
+        check(len(tokens) >= 1)
+        print(tokens)
+        (method, tokens) = parse_tokens( tokens  )
+        print(method)
+        check(len(tokens) >= 0)
+        # check that the object has the method
+
+        # WE ARE TREATING the number 4 as a method, and we can't
+        if method not in dir(obj):
+            raise GroverError("GROVER: object " + obj.getName() + " does not have a method named " + method.getName())
+        if not callable(getattr(obj, method)):
+            raise GroverError("GROVER: method " + method.getName() + " is not callable")
+        # calls
+        print(tokens)
+        f = getattr(obj, method)
+        args = parse_tokens( tokens[-1:]  )
         #TODO: learn how to pass *args & *kwargs
         expect(tokens[0], ")")
-        
+        return (f(args), tokens) #TODO: ASK WOLFE - what do I return 
+
     elif start == "set":
         #print("GOES THROUGH SET")
         # ann assignment statement 
@@ -113,6 +128,8 @@ def parse_tokens(tokens):
 
     elif start[0] == '"':
         return (Str(start), tokens[1:])
+
+    
     
     else:
         # variable name is only option remaining
