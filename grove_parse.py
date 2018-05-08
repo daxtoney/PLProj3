@@ -110,6 +110,9 @@ def parse_tokens(tokens):
         # variable name is only option remaining
         #print("STart begins: " + start)
         check(start[0].isalpha(), "Variable names must be alphabetic characters")
+        for c in start:
+            if not c.isalpha() and not c.isnumeric() and c != "_":
+                raise GroveError("GROVE: Variable name is invalid")
         return (VariableName(start), tokens[1:])
 
 

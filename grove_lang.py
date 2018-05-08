@@ -9,7 +9,6 @@ class Str(Expr):
     def __init__(self, value):
         self.value = value
 
-    def eval(self):
         noWhite = self.value.split()
         if len(noWhite) > 1:
             raise GroveError("GROVE: no spaces allowed on Strings")
@@ -18,7 +17,10 @@ class Str(Expr):
             raise GroveError("GROVE: missing quotation mark")
         if len(noQuotes) > 3:
             raise GroveError("GROVE: no support for quotes in Strings")
+        if not isinstance(self.value, str):
+            raise GroveError("GROVE: not a valid String value")
 
+    def eval(self):
         return self.value.strip('"\'')
     
 class Num(Expr):
