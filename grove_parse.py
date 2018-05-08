@@ -12,6 +12,7 @@ def expect(token, expected):
         If not, throws a GroveError with explanatory message """
     if token != expected:
         check(False, "Expected '" + expected + "' but found '" + token + "'")
+
 def is_expr(x):
     if not isinstance(x, Expr):
         check(False, "Expected expression but found " + str(type(x)))        
@@ -27,23 +28,12 @@ def is_int(s):
 def parse(s):
     """ Return an object representing a parsed command
         Throws GroveError for improper syntax """
-    # TODO
-    #if isinstance(remaining_tokens, None):
-        #return root
-    #print(s)
-    #print(s.split())
-    
-    #TypeError: 'NoneType' object is not iterable 
-    #print(s.split())
+
     (root, remaining_tokens) = parse_tokens(s.split())
-    #print(root)
-    #print(remaining_tokens)
     check(len(remaining_tokens) == 0, "Expected end of command but found '" + " ".join(remaining_tokens) + "'")
 
     return root 
-        
-        
-        
+             
 def parse_tokens(tokens):
     """ Returns a tuple:
         (an object representing the next part of the expression,
@@ -72,6 +62,7 @@ def parse_tokens(tokens):
 
     #ASK D. Wolfe or TODO: Unsure about the slpicing distance
     elif start == "call":
+        check(len(tokens) > 3)
         expect(tokens[1], "(")
         (obj, tokens) = parse_tokens( tokens[2:]  )
         check(len(tokens) > 1)
@@ -84,7 +75,7 @@ def parse_tokens(tokens):
         #print("GOES THROUGH SET")
         # ann assignment statement 
         (varname, tokens) = parse_tokens(tokens[1:])
-        #print ("THIS IS THE TOKEN: " + tokens[0])
+        check(len(tokens) > 0)
         expect(tokens[0], "=")
         if tokens[1] == "new":
             #print("GOES THROUGH NEW")

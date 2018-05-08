@@ -11,10 +11,12 @@ class Str(Expr):
 
         noWhite = value.split()
         if len(noWhite) > 1:
-            GroveError("GROVE: no spaces allowed on Strings")
+            raise GroveError("GROVE: no spaces allowed on Strings")
         noQuotes = value.split('"')
-        if len(noQuotes) > 1:
-            GroveError("GROVE: no support for quotes in Strings")
+        if len(noQuotes) == 2:
+            raise GroveError("GROVE: missing quotation mark")
+        if len(noQuotes) > 3:
+            raise GroveError("GROVE: no support for quotes in Strings")
 
     def eval(self):
        return self.value.strip('"\'')
