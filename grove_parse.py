@@ -1,4 +1,5 @@
 from grove_lang import *
+import importlib
 
 # Utility methods for handling parse errors
 def check(condition, message = "Unexpected end of expression"):
@@ -33,6 +34,7 @@ def parse(s):
     #print(s.split())
     
     #TypeError: 'NoneType' object is not iterable 
+    #print(s.split())
     (root, remaining_tokens) = parse_tokens(s.split())
     #print(root)
     #print(remaining_tokens)
@@ -72,26 +74,11 @@ def parse_tokens(tokens):
     elif start == "call":
         expect(tokens[1], "(")
         (obj, tokens) = parse_tokens( tokens[2:]  )
-        #print(obj.getName())
-        check(len(tokens) >= 1)
-        #print(tokens)
+        check(len(tokens) > 1)
         (method, tokens) = parse_tokens( tokens  )
-        #print(method)
-        check(len(tokens) >= 0)
-        # check that the object has the method
-
-        # WE ARE TREATING the number 4 as a method, and we can't
-        if method not in dir(obj):
-            raise GroveError("GROVER: object " + obj.getName() + " does not have a method named " + method.getName())
-        if not callable(getattr(obj, method)):
-            raise GroveError("GROVER: method " + method.getName() + " is not callable")
-        # calls
-        #print(tokens)
-        f = getattr(obj, method)
-        args = parse_tokens( tokens[-1:]  )
-        #TODO: learn how to pass *args & *kwargs
+        check(len(tokens) > 0)
         expect(tokens[0], ")")
-        return (f(args), tokens) #TODO: ASK WOLFE - what do I return 
+        return ( Call(obj, method, tokens[-1:]), tokens)
 
     elif start == "set":
         #print("GOES THROUGH SET")
@@ -117,12 +104,12 @@ def parse_tokens(tokens):
     #TODO: test this import code
     #ASK D. Wolfe about 'tokens' and if we want them
     elif start == "import":
-        #(varname, tokens) = parse_tokens(tokens[1:])
         (packname, tokens) = parse_tokens(tokens[1:])
-        mod = importlib.import_module(packname)
-        if packname not in gloabls().keys():
-            globals()[packname] = mod
-
+        mod = importlib.import_module(packname.getName())
+        if packname not in globals().keys():
+            globals()[packname.getName()] = mod
+        print("math" in globals())
+        return (packname,tokens)
     elif start[0] == '"':
         return (Str(start), tokens[1:])
 

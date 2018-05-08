@@ -1,4 +1,4 @@
-## Parse tree nodes for the GROVER language
+## Parse tree nodes for the GROVE language
 
 var_table = {}
 
@@ -11,13 +11,13 @@ class Str(Expr):
 
         noWhite = value.split()
         if len(noWhite) > 1:
-            GroveError("GROVER: no spaces allowed on Strings")
+            GroveError("GROVE: no spaces allowed on Strings")
         noQuotes = value.split('"')
         if len(noQuotes) > 1:
-           GroveError("GROVER: no support for quotes in Strings")
+            GroveError("GROVE: no support for quotes in Strings")
 
     def eval(self):
-        return self.value
+       return self.value.strip('"\'')
     
 class Num(Expr):
     def __init__(self, value):
@@ -33,13 +33,13 @@ class Addition(Expr):
         self.child2 = child2
 
         if not isinstance(self.child1, Expr):
-            raise GroveError("GROVER: expected axpression but recieved " + str(type(self.child1)))
+            raise GroveError("GROVE: expected axpression but recieved " + str(type(self.child1)))
 
         if not isinstance(self.child2, Expr):
-            raise GroveError("GROVER: expected axpression but recieved " + str(type(self.child2)))
+            raise GroveError("GROVE: expected axpression but recieved " + str(type(self.child2)))
 
-        if type(self.chidl1) != type(self.child2):
-            raise GroveError("GROVER: arguemnts are not of the same type")
+        if type(self.child1) != type(self.child2):
+            raise GroveError("GROVE: arguemnts are not of the same type")
 
     def eval(self):
         return self.child1.eval() + self.child2.eval()
@@ -50,14 +50,24 @@ class Call(Expr):
     def __init__(self, obj, method, *args, **kwargs):
         self.obj = obj
         self.method = method
+        self.args = args
 
-        if method not in dir(obj) and callable(getattr(obj,method)):
-            raise GroveError("GROVER: " + obj + " does not contain method " + method)
+        if method.getName() not in dir(obj.getName()) and callable(getattr(obj.getName(),method.getName())):
+            raise GroveError("GROVE: " + obj + " does not contain method " + method)
 
     #TODO: understand how *args **kwargs work and how to loop through them
 
     def eval(self):
-        pass
+         # WE ARE TREATING the number 4 as a method, and we can't
+        if self.method not in dir(self.obj):
+            raise GroveError("GROVER: object " + self.obj.getName() + " does not have a method named " + self.method.getName())
+        if not callable(getattr(self.obj, self.method)):
+            raise GroveError("GROVER: method " + self.method.getName() + " is not callable")
+
+        f = getattr(self.obj, self.method)
+        funcArgs = parse_tokens( self.args )
+
+        return f(funcArgs)
 
 #TODO: Create className & variableName classes
 class ClassName(Expr):
@@ -65,7 +75,7 @@ class ClassName(Expr):
         self.name = name
         #TODO: add the extra conditions
         if not self.name[0].isalpha() and name[0] != "_":
-            raise GroveError("GROVER: " + name + " is invalid sytax for the name of a variable")
+            raise GroveError("GROVE: " + name + " is invalid sytax for the name of a variable")
 
     def getName(self):
         return self.name
@@ -79,7 +89,7 @@ class VariableName(Expr):
 
         #TODO: add the extra conditions
         if not self.name[0].isalpha() and name[0] != "_":
-            raise GroveError("GROVER: " + name + " is invalid sytax for the name of a variable")
+            raise GroveError("GROVE: " + name + " is invalid sytax for the name of a variable")
 
     def getName(self):
         return self.name 
@@ -88,7 +98,7 @@ class VariableName(Expr):
         if self.name in var_table:
             return var_table[self.name]
         else:
-            raise GroveError("GROVER: undefined variable " + self.name)
+            raise GroveError("GROVE: undefined variable " + self.name)
 
 #TODO: understand the differences between "set" and "new" and update accordingly
 class Stmt:
@@ -98,10 +108,10 @@ class Stmt:
         self.isSet = isSet
 
         if not isinstance(self.expr, Expr):
-            raise GroveError("GROVER: expected expression but recieved " + str(type(self.expr)))
+            raise GroveError("GROVE: expected expression but recieved " + str(type(self.expr)))
 
         if not isinstance(self.varname, VariableName):
-            raise GroveError("GROVER: expected variable name but recieved " + str(type(self.varname)))
+            raise GroveError("GROVE: expected variable name but recieved " + str(type(self.varname)))
 
     def eval(self):
         if (self.isSet):
