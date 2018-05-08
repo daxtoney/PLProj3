@@ -64,9 +64,9 @@ class ClassName(Expr):
     def __init__(self, name):
         self.name = name
 
-        #TODO: add the extra conditions
-        if (not self.name[0].isalpha() and name[0] != "_"):
-            raise GroverError("GROVER: " + name + " is invalid sytax for the name of a variable")
+    #TODO: add the extra conditions
+    if (not self.name[0].isalpha() and name[0] != "_"):
+        raise GroverError("GROVER: " + name + " is invalid sytax for the name of a variable")
 
     def getName(self):
         return self.name

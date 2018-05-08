@@ -95,11 +95,7 @@ def parse_tokens(tokens):
         else:
             (child, tokens) = parse_tokens(tokens[1:])
             return ( Stmt(varname, child, True), tokens )
-##    elif start == "new":
-##        (varname, tokens) = parse_tokens(tokens[1:])
-##        expect(tokens[0], "=")
-##        (child, tokens) = parse_tokens(tokens[1:])
-##        return ( Stmt(varname, child, False), tokens )
+            
     elif start == "quit" or start == "exit":
         import sys
         sys.exit()
