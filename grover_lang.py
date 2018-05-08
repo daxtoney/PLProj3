@@ -61,7 +61,7 @@ class Call(Expr):
 
 #TODO: Create className & variableName classes
 class ClassName(Expr):
-        def __init__(self, name):
+    def __init__(self, name):
         self.name = name
 
         #TODO: add the extra conditions
@@ -69,7 +69,7 @@ class ClassName(Expr):
             raise GroverError("GROVER: " + name + " is invalid sytax for the name of a variable")
 
     def getName(self):
-        return self.name 
+        return self.name
         
 #Split on white spaces, then check for length if 1 split on quotes and check for length. Lastly, evalutate string
 
@@ -114,7 +114,7 @@ class Stmt:
             self.modulename = "__builtins__"
             self.classname = self.expr
 
-            if type(thing) == <type 'module'>:
+            if isinstance(thing, ModuleType):
                 cls = getattr(thing, self.classname)
             else:
                 cls = thing[self.classname]

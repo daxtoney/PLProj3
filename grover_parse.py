@@ -99,10 +99,11 @@ def parse_tokens(tokens):
     #TODO: test this import code
     #ASK D. Wolfe about 'tokens' and if we want them
     elif start == "import":
-        (varname, tokens) = parse_tokens(tokens[1:])
+        #(varname, tokens) = parse_tokens(tokens[1:])
         (packname, tokens) = parse_tokens(tokens[1:])
-        mod = importlib.import_module(varname, packname)
-        
+        mod = importlib.import_module(packname)
+        if packname not in gloabls().keys():
+            globals()[packname] = mod
     
     else:
         # variable name is only option remaining 
