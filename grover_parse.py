@@ -4,7 +4,7 @@ from grover_lang import *
 def check(condition, message = "Unexpected end of expression"):
     """ Checks if condition is true, raising a ValueError otherwise """
     if not condition:
-        raise ValueError("GROVER: " + message)
+        raise GroverError("GROVER: " + message)
         
 def expect(token, expected):
     """ Checks that token matches expected
@@ -67,12 +67,20 @@ def parse_tokens(tokens):
     elif start == "call":
         expect(tokens[1], "(")
         (obj, tokens) = parse_tokens( tokens[2:]  )
-        check(len(tokens) > 1)
+        check(len(tokens) >= 1)
         (method, tokens) = parse_tokens( tokens[2:]  )
-        check(len(tokens) > 0)
+        check(len(tokens) >= 0)
         #TODO: learn how to pass *args & *kwargs
+        # check that the object has the method 
+        if method not in dir(obj): 
+            raise GroverError("GROVER: object " + obj + " does not have a method named " + method)
+        if not callable(getattr(obj, method)):
+            raise GroverError("GROVER: method " + method + " is not callable")
+        # calls 
+        f = getattr(obj, method)
+        args = parse_tokens( tokens[-1:]  )
         expect(tokens[0], ")")
-        
+        return f(args) #TODO: ASK WOLFE - what do I return 
     elif start == "set":
         # ann assignment statement 
         (varname, tokens) = parse_tokens(tokens[1:])
