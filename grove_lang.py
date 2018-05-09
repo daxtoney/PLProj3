@@ -1,5 +1,6 @@
 ## Parse tree nodes for the GROVE language
 import importlib
+from types import ModuleType
 
 var_table = {}
 
@@ -12,11 +13,11 @@ class Imprt(Expr):
 
     def eval(self):
         try:
-            mod = importlib.import_module(packname.getName())
+            mod = importlib.import_module(self.packname.getName())
         except ImportError as e:
             raise GroveError("GROVE: package does not exist")
         
-        if packname not in globals().keys():
+        if self.packname not in globals().keys():
             globals()[self.packname.getName()] = mod
 
 class Str(Expr):
@@ -150,10 +151,19 @@ class Stmt:
             self.modulename = "__builtins__"
             self.classname = self.expr
 
-            if isinstance(thing, ModuleType):
-                cls = getattr(thing, self.classname)
+            # if isinstance(self.varname.getName(), ModuleType):
+            #     cls = getattr(self.varname.getName(), self.classname)
+            # else:
+            #     cls = self.varname.getName()[self.classname]
+
+            # var_table[self.varname.getName()] = cls()
+
+
+            if isinstance(self.modulename, ModuleType):
+                cls = getattr(self.varname.getName(), self.classname)
             else:
-                cls = thing[self.classname]
+                cls = self.modulename[self.classname]
+
             var_table[self.varname.getName()] = cls()
 
 

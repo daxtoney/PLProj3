@@ -4,6 +4,7 @@ from grove_lang import *
 def check(condition, message = "Unexpected end of expression"):
     """ Checks if condition is true, raising a GroveError otherwise """
     if not condition:
+
         raise GroveError("GROVE: " + message)
         
 def expect(token, expected):
@@ -110,9 +111,11 @@ def parse_tokens(tokens):
     else:
         # variable name is only option remaining
         #print("STart begins: " + start)
-        check(start[0].isalpha(), "Variable names must be alphabetic characters")
+        check(start[0].isalpha() or start[0] == "_", "Variable names must be alphabetic characters")
+
         for c in start:
             if not c.isalpha() and not c.isnumeric() and c != "_":
+                print(c)
                 raise GroveError("GROVE: Variable name is invalid")
         return (VariableName(start), tokens[1:])
 
