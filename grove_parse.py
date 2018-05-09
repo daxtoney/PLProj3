@@ -69,6 +69,7 @@ def parse_tokens(tokens):
         (method, tokens) = parse_tokens( tokens )
         check(len(tokens) > 0)
         expect(tokens[-1:][0], ")")
+        #print(tokens[:-1])
         return ( Call(obj, method, tokens[:-1]), "")
 
     elif start == "set":
@@ -114,7 +115,7 @@ def parse_tokens(tokens):
         check(start[0].isalpha() or start[0] == "_", "Variable names must be alphabetic characters")
 
         for c in start:
-            if not c.isalpha() and not c.isnumeric() and c != "_":
+            if not c.isalpha() and not c.isnumeric() and c != "_" and c != ".":
                 print(c)
                 raise GroveError("GROVE: Variable name is invalid")
         return (VariableName(start), tokens[1:])

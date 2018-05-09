@@ -52,6 +52,7 @@ class Addition(Expr):
         self.child2 = child2
 
     def eval(self):
+
         if not isinstance(self.child1, Expr):
             raise GroveError("GROVE: expected axpression but recieved " + str(type(self.child1)))
 
@@ -70,6 +71,9 @@ class Addition(Expr):
 # Double check for what type of arguments
 class Call(Expr):
     def __init__(self, obj, method, *args):
+        #rint("IT GETS HERE")
+        #print(obj.getName())
+        #print(method.getName())
         self.obj = obj
         self.method = method
         self.args = args
@@ -79,18 +83,45 @@ class Call(Expr):
     #TODO: understand how *args **kwargs work and how to loop through them
 
     def eval(self):
+        #print("IT GETS HERE")
          # WE ARE TREATING the number 4 as a method, and we can't
-        if self.method.getName() not in dir(self.obj):
+        #print(dir(self.obj.getName()))
+        if self.method.getName() not in dir(self.obj.getName()):
             #print(self.obj)
             #print(self.method.getName())
             raise GroveError("GROVER: object " + self.obj.getName() + " does not have a method named " + self.method.getName())
-        if not callable(getattr(self.obj, self.method)):
+        if not callable(getattr(self.obj.getName(), self.method.getName())):
             raise GroveError("GROVER: method " + self.method.getName() + " is not callable")
 
-        f = getattr(self.obj, self.method)
-        #funcArgs = parse_tokens( self.args )
-        #print(self.args)
-        return f(self.args)
+        f = getattr(self.obj.eval(), self.method.getName())
+        
+        try:
+            if len(self.args[0]) == 0:
+                x = f()
+                return x
+            else:
+                y = self.args[0][0]
+                y = y.replace('"',"")
+                
+                #print(y)
+                x = f(y)
+                return x
+        except:
+            raise GroveError("GROVE: invalid call syntax")
+        #print(f())
+        #return f(self.args)
+
+class ComplexName(Expr):
+    def __init__(self, name):
+        self.name = name
+        if self.name.count(".") != 1:
+            raise GroveError("GROVE: Wrong class name")
+
+    def eval(self):
+        if not self.name[0].isalpha() and name[0] != "_":
+            raise GroveError("GROVE: " + name + " is invalid sytax for the name of a class")
+
+        
     
 #TODO: Create className & variableName classes
 class ClassName(Expr):
